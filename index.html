@@ -77,7 +77,6 @@
     .btn-secondary { background-color: var(--secondary); color: #FCF5E2; border: 1px solid var(--secondary); height: 52px; padding: 0 24px; border-radius: 24px; font-family: var(--font); font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; width: 100%; display: inline-flex; align-items: center; justify-content: center;}
     .btn-secondary:hover { opacity: 0.9; }
 
-    /* New Workspace button row mapping (75% View/Edit, 25% Clear Pill) */
     .workspace-btn-row { display: grid; grid-template-columns: 1fr 85px; gap: 8px; }
     .btn-clear-pill { background: transparent; color: var(--error); border: 2px solid var(--error); border-radius: 24px; font-family: var(--font); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;}
     .btn-clear-pill:hover { background: var(--error); color: white; }
@@ -106,7 +105,7 @@
     .audio-select-container { margin-bottom: 24px; }
     .audio-select-container select { background: white; color: var(--secondary); border-color: var(--border); cursor: pointer; }
 
-    /* PDF Workspace Dropzones */
+    /* PDF Dropzones */
     .pdf-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .pdf-index-badge { background: var(--secondary); color: var(--surface); font-size: 14px; font-weight: 800; padding: 4px 12px; border-radius: 12px; }
     
@@ -189,7 +188,7 @@
   <div class="master-wrapper">
 
     <div class="meta-grid-bar">
-      <span>SYS.ID // UNIVtools</span><span>University</span>
+      <span>SYS.KERNEL // ACADEMIC_CORE</span><span>PROTOCOL: SECURE_LOCAL_BUFFER</span>
     </div>
 
     <header class="header-block">
@@ -275,7 +274,7 @@
           <div class="pdf-card-header"><div><span class="caption">Engine 01</span><h3 style="margin:0;">PDF Merger</h3></div><span class="pdf-index-badge">01</span></div>
           <p style="font-size: 13px; margin-top:4px;">Combine standalone PDF files. Open the studio to visually arrange or discard pages.</p>
           
-          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-1')">
+          <label class="file-drop-area">
             <input type="file" id="input-tool-1" multiple accept="application/pdf" onchange="handleAdditiveIngest('merger', this)">
             <span style="font-size: 22px;">📄+📄</span><span style="font-weight: 800;">Upload PDF Files</span>
             <span class="file-counter-tag" id="tag-tool-1">0 Files Ingested</span>
@@ -295,7 +294,7 @@
           <div class="pdf-card-header"><div><span class="caption">Engine 02</span><h3 style="margin:0;">PDF Splitter</h3></div><span class="pdf-index-badge">02</span></div>
           <p style="font-size: 13px; margin-top:4px;">Upload multi-page PDFs. Open the light table to pluck out unwanted pages instantly.</p>
           
-          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-2')">
+          <label class="file-drop-area">
             <input type="file" id="input-tool-2" multiple accept="application/pdf" onchange="handleAdditiveIngest('splitter', this)">
             <span style="font-size: 22px;">✂️📄</span><span style="font-weight: 800;">Upload Master PDFs</span>
             <span class="file-counter-tag" id="tag-tool-2">0 Pages Rendered</span>
@@ -315,7 +314,7 @@
           <div class="pdf-card-header"><div><span class="caption">Engine 03</span><h3 style="margin:0;">Compressor</h3></div><span class="pdf-index-badge">03</span></div>
           <p style="font-size: 13px; margin-top:4px;">Re-encodes vector streams down into optimized raster matrices to save hard drive space.</p>
           
-          <label class="file-drop-area" style="padding:12px 16px;" onclick="triggerNativeInput('input-tool-3')">
+          <label class="file-drop-area" style="padding:12px 16px;">
             <input type="file" id="input-tool-3" multiple accept="application/pdf" onchange="handleAdditiveIngest('compressor', this)">
             <span style="font-size: 22px;">🗜️</span><span style="font-weight: 800;">Upload Heavy Files</span>
             <span class="file-counter-tag" id="tag-tool-3">Ready for Downsample</span>
@@ -339,7 +338,7 @@
           <div class="pdf-card-header"><div><span class="caption">Engine 04</span><h3 style="margin:0;">Image to PDF</h3></div><span class="pdf-index-badge">04</span></div>
           <p style="font-size: 13px; margin-top:4px;">Compile loose JPG/PNG raster graphics. Add more anytime; sequence prior to compile.</p>
           
-          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-4')">
+          <label class="file-drop-area">
             <input type="file" id="input-tool-4" multiple accept="image/png, image/jpeg" onchange="handleAdditiveIngest('img2pdf', this)">
             <span style="font-size: 22px;">🖼️&rarr;📄</span><span style="font-weight: 800;">Upload Assets</span>
             <span class="file-counter-tag" id="tag-tool-4">0 Images Queued</span>
@@ -359,7 +358,7 @@
           <div class="pdf-card-header"><div><span class="caption">Engine 05</span><h3 style="margin:0;">PDF to Image</h3></div><span class="pdf-index-badge">05</span></div>
           <p style="font-size: 13px; margin-top:4px;">Rasterize master PDF layout pages into individual, high-fidelity PNG graphic files.</p>
           
-          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-5')">
+          <label class="file-drop-area">
             <input type="file" id="input-tool-5" multiple accept="application/pdf" onchange="handleAdditiveIngest('pdf2img', this)">
             <span style="font-size: 22px;">📄&rarr;🖼️</span><span style="font-weight: 800;">Upload Master PDF</span>
             <span class="file-counter-tag" id="tag-tool-5">0 Pages Ripped</span>
@@ -379,7 +378,7 @@
           <div class="pdf-card-header"><div><span class="caption">Engine 06</span><h3 style="margin:0;">Hybrid OS</h3></div><span class="pdf-index-badge">06</span></div>
           <p style="font-size: 13px; margin-top:4px;">Interleave raw scan photos and standard PDF chapters together in the same visual timeline.</p>
           
-          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-6')">
+          <label class="file-drop-area">
             <input type="file" id="input-tool-6" multiple accept="application/pdf, image/png, image/jpeg" onchange="handleAdditiveIngest('hybrid', this)">
             <span style="font-size: 22px;">📄+🖼️</span><span style="font-weight: 800;">Drop PDFs &amp; Images</span>
             <span class="file-counter-tag" id="tag-tool-6">0 Mixed Assets Queued</span>
@@ -390,7 +389,7 @@
             <button class="btn-secondary" id="edit-tool-6" disabled onclick="launchStudio('hybrid')">Interleave Order</button>
             <button class="btn-clear-pill" id="clear-tool-6" disabled onclick="clearWorkspace('hybrid')">Clear</button>
           </div>
-          <button class="btn-primary" id="run-tool-6" disabled onclick="executePayload('hybrid')">Compile Hybrid Output</button>
+          <button class="btn-primary" id="run-tool-6" disabled onclick="executePayload('hybrid')">Compile Output</button>
         </div>
       </div>
 
@@ -468,15 +467,12 @@
     
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    // Global Operating Datastores (Never reset implicitly)
     const engineMemory = {
       merger: [], splitter: [], compressor: [], img2pdf: [], pdf2img: [], hybrid: []
     };
 
     let activeStudioTool  = null;
     let draggedThumbIndex = null;
-
-    function triggerNativeInput(id) { document.getElementById(id).click(); }
 
     const toolMap = {
       merger:     { title: "PDF Merger Studio", edit: "edit-tool-1", clear: "clear-tool-1", run: "run-tool-1", tag: "tag-tool-1", fileOut: "Merged_Academic_Output.pdf" },
@@ -487,7 +483,6 @@
       hybrid:     { title: "Hybrid Interleave OS", edit: "edit-tool-6", clear: "clear-tool-6", run: "run-tool-6", tag: "tag-tool-6", fileOut: "Synthesized_Hybrid_Document.pdf" }
     };
 
-    // 3.1 STRICTLY ADDITIVE INGESTION
     async function handleAdditiveIngest(toolKey, inputElement) {
       const files = Array.from(inputElement.files);
       if(files.length === 0) return;
@@ -501,7 +496,6 @@
       tag.textContent = "⏳ Extracting & Appending Nodes...";
       tag.style.background = "var(--warning)";
 
-      // NOTICE: We do NOT wipe engineMemory[toolKey]. We append to it!
       for(let file of files) {
         if(file.type === 'application/pdf') {
           const rippedPages = await extractPdfCanvases(file);
@@ -513,8 +507,6 @@
       }
 
       updateWorkspaceCardUi(toolKey);
-      
-      // FLUSH NATIVE BUFFER: This lets you click the same file again instantly
       inputElement.value = ''; 
     }
 
@@ -533,15 +525,11 @@
       if(count > 0) {
         tag.textContent = `${count} Total Pages in Pool`;
         tag.style.background = "var(--success)";
-        editBtn.disabled  = false;
-        runBtn.disabled   = false;
-        clearBtn.disabled = false;
+        editBtn.disabled  = false; runBtn.disabled   = false; clearBtn.disabled = false;
       } else {
         tag.textContent = `0 Files Ingested`;
         tag.style.background = "var(--secondary)";
-        editBtn.disabled  = true;
-        runBtn.disabled   = true;
-        clearBtn.disabled = true;
+        editBtn.disabled  = true; runBtn.disabled   = true; clearBtn.disabled = true;
       }
     }
 
@@ -580,7 +568,6 @@
       });
     }
 
-    // 3.2 THE MASTER PAGE STUDIO (LIGHT TABLE)
     const modalDom = document.getElementById('page-studio-modal');
     const studioGrid = document.getElementById('studio-grid');
 
@@ -592,7 +579,7 @@
 
     function closeStudio() {
       modalDom.classList.remove('active'); document.body.style.overflow = 'auto';
-      updateWorkspaceCardUi(activeStudioTool); // Sync remaining count back to card instantly!
+      updateWorkspaceCardUi(activeStudioTool); 
       activeStudioTool = null;
     }
 
@@ -630,7 +617,6 @@
       const currentTool = activeStudioTool; closeStudio(); executePayload(currentTool);
     });
 
-    // 3.3 PAYLOAD COMPILATION & DISK EXPORT
     async function executePayload(toolKey) {
       const nodes = engineMemory[toolKey];
       if(nodes.length === 0) return alert("Queue at least 1 document node before compiling.");
