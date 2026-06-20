@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Academic Suite. // SaaS OS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    /* =========================================================
+       1. STRICT VISUAL DESIGN SYSTEM TOKENS
+    ========================================================= */
+    :root {
+      --primary: #FF2D51;
+      --secondary: #2B313F;
+      --bg: #050105;
+      --surface: #FCF5E2;
+      --text-primary: #FCF5E2;
+      --text-secondary: #A7A1A8;
+      --border: #2B313F;
+      --success: #4CAF50;
+      --warning: #F59E0B;
+      --error: #FF2D51;
+      --font: 'Space Grotesk', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg); color: var(--text-primary);
+      font-family: var(--font); line-height: 1.5;
+      padding: 32px 24px; overflow-x: hidden;
+    }
+
+    .master-wrapper { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px; }
+
+    /* Typography */
+    h1 { font-size: clamp(36px, 6vw, 48px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; text-align: center; color: var(--text-primary); }
+    h2 { font-size: clamp(20px, 3vw, 24px); font-weight: 800; letter-spacing: -0.02em; color: var(--surface); margin-bottom: 24px; }
+    h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--secondary); margin-bottom: 16px; }
+    .caption { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+
+    /* Blueprint Framing */
+    .editorial-line { width: 100%; height: 2px; background-color: var(--secondary); position: relative; margin: 16px 0; }
+    .editorial-line::before, .editorial-line::after { content: '+'; position: absolute; top: -11px; color: var(--primary); font-size: 16px; font-weight: 800; }
+    .editorial-line::before { left: 0; } .editorial-line::after { right: 0; }
+
+    .meta-grid-bar { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(--secondary); padding-bottom: 8px; }
+
+    /* Header & Dead-Locked Logo */
+    .header-block { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
+    .locked-logo-container { width: 100%; max-width: 380px; pointer-events: none; user-select: none; -webkit-user-drag: none; display: flex; justify-content: center; align-items: center; padding: 8px 0; }
+    .locked-logo-container img { width: 100%; height: auto; max-height: 125px; object-fit: contain; display: block; }
+
+    /* SaaS Ticket Pass */
+    .portal-ticket-pass { background: var(--secondary); border: 2px solid var(--border); border-radius: 32px; width: 100%; max-width: 850px; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; text-decoration: none; transition: all 0.2s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .portal-ticket-pass:hover { border-color: var(--primary); transform: translateY(-2px); background: #323949; }
+    .portal-url-highlight { font-size: clamp(16px, 2.5vw, 22px); font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+    .portal-subtext { font-size: clamp(13px, 1.5vw, 15px); font-weight: 500; color: var(--surface); opacity: 0.9; margin-top: 2px;}
+    .portal-arrow-badge { background: var(--surface); color: var(--secondary); font-weight: 800; font-size: 14px; padding: 10px 20px; border-radius: 20px; display: inline-block;}
+
+    /* Component Patterns */
+    .card { background-color: var(--surface); border-radius: 40px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.10); color: var(--secondary); display: flex; flex-direction: column; justify-content: space-between; }
+    .card.feature { border-radius: 56px; padding: 32px; }
+
+    .btn-primary { background-color: var(--primary); color: #FCF5E2; height: 52px; padding: 0 24px; border-radius: 24px; border: none; font-family: var(--font); font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; justify-content: center; width: 100%; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 24px rgba(255,45,81,0.25); }
+    .btn-primary:disabled { opacity: 0.4; pointer-events: none; }
+
+    .btn-secondary { background-color: var(--secondary); color: #FCF5E2; border: 1px solid var(--secondary); height: 52px; padding: 0 24px; border-radius: 24px; font-family: var(--font); font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; width: 100%; display: inline-flex; align-items: center; justify-content: center;}
+    .btn-secondary:hover { opacity: 0.9; }
+
+    /* New Workspace button row mapping (75% View/Edit, 25% Clear Pill) */
+    .workspace-btn-row { display: grid; grid-template-columns: 1fr 85px; gap: 8px; }
+    .btn-clear-pill { background: transparent; color: var(--error); border: 2px solid var(--error); border-radius: 24px; font-family: var(--font); font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;}
+    .btn-clear-pill:hover { background: var(--error); color: white; }
+    .btn-clear-pill:disabled { opacity: 0.3; pointer-events: none; border-color: var(--secondary); color: var(--secondary); }
+
+    input[type="text"], input[type="number"], select { height: 52px; padding: 0 16px; background-color: var(--secondary); color: var(--surface); border: 1px solid var(--border); border-radius: 16px; font-family: var(--font); font-size: 14px; font-weight: 700; outline: none; transition: all 0.15s; width: 100%; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 24px rgba(255,45,81,0.25); }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 32px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+
+    /* CGPA Calculator */
+    .calc-display { background-color: var(--secondary); color: var(--surface); padding: 16px 20px; border-radius: 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .calc-title { font-weight: 700; font-size: 16px; }
+    #calc-gpa-output { font-size: 32px; font-weight: 800; color: var(--primary); }
+    #calc-courses { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 4px; margin-bottom: 24px; }
+    .calc-course-row { display: flex; gap: 8px; }
+    .calc-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+    /* Bauhaus Pomodoro */
+    .pomo-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .timer-input-box { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.05); padding: 4px 12px; border-radius: 16px; }
+    .timer-input-box input { width: 60px; height: 34px; text-align: center; background: white; color: var(--secondary); border: 1px solid var(--border); }
+    .timer-time-display { font-size: clamp(56px, 7vw, 72px); font-weight: 800; color: var(--bg); text-align: center; line-height: 1; margin-bottom: 16px; font-variant-numeric: tabular-nums; }
+    .tree-stage-window { width: 100%; aspect-ratio: 16/10; max-height: 230px; background-color: #F7F4EA; border-radius: 24px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; position: relative; }
+    .audio-select-container { margin-bottom: 24px; }
+    .audio-select-container select { background: white; color: var(--secondary); border-color: var(--border); cursor: pointer; }
+
+    /* PDF Workspace Dropzones */
+    .pdf-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .pdf-index-badge { background: var(--secondary); color: var(--surface); font-size: 14px; font-weight: 800; padding: 4px 12px; border-radius: 12px; }
+    
+    .file-drop-area { border: 2px dashed var(--border); border-radius: 24px; padding: 20px 16px; text-align: center; cursor: pointer; font-size: 14px; font-weight: 700; background: rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin: 16px 0; flex-grow: 1; transition: all 0.2s; }
+    .file-drop-area:hover { border-color: var(--primary); color: var(--primary); background: rgba(255,45,81,0.04); }
+    .file-drop-area input { display: none; }
+    .file-counter-tag { font-size: 11px; background: var(--secondary); color: var(--surface); padding: 2px 10px; border-radius: 10px; font-weight: 800;}
+
+    /* =========================================================
+       2. UNIVERSAL PAGE STUDIO (The Visual Light-Table Modal)
+    ========================================================= */
+    #page-studio-modal {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(5, 1, 5, 0.95); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; padding: 24px;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    #page-studio-modal.active { opacity: 1; pointer-events: all; }
+
+    .studio-top-bar { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--secondary); padding-bottom: 12px; }
+    .studio-title { font-size: 24px; font-weight: 800; color: var(--surface); }
+
+    .studio-workspace-grid {
+      width: 100%; max-width: 1200px; flex-grow: 1;
+      background: var(--surface); border-radius: 32px; border: 2px solid var(--border);
+      padding: 24px; overflow-y: auto; display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px;
+      align-content: start; box-shadow: inset 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .page-thumb-card {
+      background: #EBE3D5; border: 2px solid var(--secondary);
+      border-radius: 16px; padding: 8px; display: flex; flex-direction: column;
+      align-items: center; position: relative; cursor: grab; user-select: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .page-thumb-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    .page-thumb-card:active { cursor: grabbing; }
+    .page-thumb-card.drag-over { border: 2px dashed var(--primary); transform: scale(1.05); }
+
+    .page-thumb-card img { width: 100%; aspect-ratio: 1/1.35; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); background: white; pointer-events: none; }
+    
+    .page-meta-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 11px; font-weight: 800; color: var(--secondary); }
+    .page-del-btn { position: absolute; top: -8px; right: -8px; background: var(--error); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; font-size: 11px; }
+    
+    .order-shift-group { position: absolute; bottom: 32px; display: flex; gap: 4px; opacity: 0.85; }
+    .order-shift-group button { background: var(--secondary); color: white; border: none; border-radius: 4px; width: 24px; height: 24px; font-weight: bold; cursor: pointer; font-size: 11px; }
+
+    .studio-bottom-bar { width: 100%; max-width: 1200px; display: flex; justify-content: flex-end; gap: 16px; margin-top: 20px; }
+
+    #studio-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(252, 245, 226, 0.9); z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: var(--primary); border-radius: 32px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    #studio-loader.active { opacity: 1; pointer-events: all; }
+
+    @media (max-width: 600px) { body { padding: 16px 12px; } .card.feature { padding: 24px; border-radius: 40px; } .portal-ticket-pass { padding: 16px 20px; flex-direction: column; text-align: center;} .studio-workspace-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); padding: 16px; } }
+  </style>
+</head>
+<body>
+
+  <div id="page-studio-modal">
+    <div class="studio-top-bar">
+      <div>
+        <span class="caption" id="studio-subtitle">WORKSPACE LIGHT-TABLE</span>
+        <div class="studio-title" id="studio-main-title">Document Arranger</div>
+      </div>
+      <button class="btn-secondary" onclick="closeStudio()" style="width: auto; height: 42px;">Close Studio</button>
+    </div>
+
+    <div class="studio-workspace-grid" id="studio-grid">
+      <div id="studio-loader">⏳ Ripping Document Vectors to Canvases...</div>
+    </div>
+
+    <div class="studio-bottom-bar">
+      <button class="btn-secondary" onclick="closeStudio()" style="width: 160px;">Cancel</button>
+      <button class="btn-primary" id="btn-studio-commit" style="width: 260px;">Apply & Compile Payload</button>
+    </div>
+  </div>
+
+
+  <div class="master-wrapper">
+
+    <div class="meta-grid-bar">
+      <span>SYS.ID // UNIVtools</span><span>University</span>
+    </div>
+
+    <header class="header-block">
+      <div class="locked-logo-container">
+        <img src="https://ik.imagekit.io/e8vtmc5nh/Picsart_26-06-20_14-11-39-229.png" alt="University Brand Logo">
+      </div>
+
+      <h1>The Academic Suite.</h1>
+      <div class="editorial-line"></div>
+
+      <a href="https://ouruniversitynotes.blogspot.com" target="_blank" rel="noopener noreferrer" class="portal-ticket-pass">
+        <div><span class="caption" style="color: var(--primary);">OFFICIAL ACADEMIC REPOSITORY</span><div class="portal-url-highlight">Ouruniversitynotes.blogspot.com</div><div class="portal-subtext">Click here for more Notes and materials</div></div>
+        <div class="portal-arrow-badge">&rarr; Access Portal</div>
+      </a>
+    </header>
+
+
+    <div class="grid-2">
+
+      <div class="card feature calc-wrapper">
+        <div>
+          <span class="caption">Academic Analytics</span><h3 style="margin-bottom: 24px;">CGPA Calculator</h3>
+          <div class="calc-display"><div class="calc-title">🎓 Cumulative Output</div><div id="calc-gpa-output">0.00</div></div>
+          <div id="calc-courses"></div>
+        </div>
+        <div class="calc-buttons">
+          <button class="btn-secondary" id="btn-add">+ Add</button><button class="btn-primary" id="btn-calc">Result</button><button id="btn-reset" style="background:transparent; color:var(--error); border:2px solid var(--error); border-radius:24px; font-weight:700; cursor:pointer;">Del</button>
+        </div>
+      </div>
+
+
+      <div class="card feature">
+        <div>
+          <div class="pomo-top-bar">
+            <span class="caption">Productivity Sanctuary</span>
+            <div class="timer-input-box"><span style="font-size:12px; font-weight:700;">Mins:</span><input type="number" id="pomo-minute-goal" value="25" min="1" max="120"></div>
+          </div>
+          <div class="timer-time-display" id="timer-display-screen">25:00</div>
+
+          <div class="tree-stage-window">
+            <svg viewBox="0 0 400 240" style="width: 100%; height: 100%; overflow: visible;">
+              <rect width="400" height="240" fill="#FCF5E2"/><line x1="0" y1="200" x2="400" y2="200" stroke="#2B313F" stroke-width="3"/>
+              <rect x="160" y="200" width="80" height="28" rx="14" fill="#2B313F"/><circle id="geo-seed" cx="200" cy="214" r="6" fill="#FF2D51"/>
+              <path id="geo-trunk" d="M 200 200 L 200 60" stroke="#2B313F" stroke-width="12" stroke-linecap="round" style="transform-origin: 200px 200px; transform: scaleY(0);"/>
+              <path id="geo-branch-l" d="M 200 130 L 140 90" stroke="#2B313F" stroke-width="8" stroke-linecap="round" style="transform-origin: 200px 130px; transform: scale(0);"/>
+              <path id="geo-branch-r" d="M 200 110 L 260 80" stroke="#2B313F" stroke-width="8" stroke-linecap="round" style="transform-origin: 200px 110px; transform: scale(0);"/>
+              <g id="canopy-group">
+                <rect id="tier-1" x="100" y="80" width="200" height="46" rx="23" fill="#2B313F" style="transform-origin: 200px 103px; transform: scaleX(0);"/>
+                <rect id="tier-2" x="125" y="50" width="150" height="40" rx="20" fill="#4CAF50" style="transform-origin: 200px 70px; transform: scaleX(0);"/>
+                <rect id="tier-3" x="160" y="24" width="80" height="36" rx="18" fill="#FCF5E2" stroke="#2B313F" stroke-width="4" style="transform-origin: 200px 42px; transform: scale(0);"/>
+              </g>
+              <g id="apple-1" style="transform-origin: 135px 126px; transform: scale(0);"><line x1="135" y1="110" x2="135" y2="126" stroke="#2B313F" stroke-width="2.5"/><circle cx="135" cy="132" r="9" fill="#FF2D51"/></g>
+              <g id="apple-2" style="transform-origin: 265px 116px; transform: scale(0);"><line x1="265" y1="100" x2="265" y2="116" stroke="#2B313F" stroke-width="2.5"/><circle cx="265" cy="122" r="9" fill="#FF2D51"/></g>
+              <g id="apple-3" style="transform-origin: 200px 60px; transform: scale(0);"><line x1="200" y1="42" x2="200" y2="60" stroke="#2B313F" stroke-width="2.5"/><circle cx="200" cy="68" r="11" fill="#FF2D51"/></g>
+            </svg>
+          </div>
+
+          <div class="audio-select-container">
+            <span class="caption">Ambient Soundtrack Stream</span>
+            <select id="soundtrack-source">
+              <option value="https://cdn.freesound.org/previews/608/608922_11861866-lq.mp3">🎧 Track: Lo-Fi Deep Focus</option>
+              <option value="https://cdn.freesound.org/previews/530/530617_11142145-lq.mp3">🌧️ Track: Rain on Window Glass</option>
+              <option value="https://cdn.freesound.org/previews/416/416560_5121236-lq.mp3">☕ Track: Acoustic Coffeehouse</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+          <button class="btn-primary" id="btn-pomo-start">Start</button><button class="btn-secondary" id="btn-pomo-reset">Reset</button><button class="btn-secondary" id="btn-pomo-sound" title="Toggle Sound">♫ Play</button>
+        </div>
+        <audio id="hardware-audio-player" loop preload="none"></audio>
+      </div>
+
+    </div>
+
+    <div class="editorial-line"></div>
+
+    <h2>PDF &amp; Image Operating Infrastructure</h2>
+
+    <div class="grid-3">
+
+      <div class="card" id="card-tool-1">
+        <div>
+          <div class="pdf-card-header"><div><span class="caption">Engine 01</span><h3 style="margin:0;">PDF Merger</h3></div><span class="pdf-index-badge">01</span></div>
+          <p style="font-size: 13px; margin-top:4px;">Combine standalone PDF files. Open the studio to visually arrange or discard pages.</p>
+          
+          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-1')">
+            <input type="file" id="input-tool-1" multiple accept="application/pdf" onchange="handleAdditiveIngest('merger', this)">
+            <span style="font-size: 22px;">📄+📄</span><span style="font-weight: 800;">Upload PDF Files</span>
+            <span class="file-counter-tag" id="tag-tool-1">0 Files Ingested</span>
+          </label>
+        </div>
+        <div style="display:flex; flex-direction: column; gap:8px;">
+          <div class="workspace-btn-row">
+            <button class="btn-secondary" id="edit-tool-1" disabled onclick="launchStudio('merger')">View &amp; Edit</button>
+            <button class="btn-clear-pill" id="clear-tool-1" disabled onclick="clearWorkspace('merger')">Clear</button>
+          </div>
+          <button class="btn-primary" id="run-tool-1" disabled onclick="executePayload('merger')">Download Output</button>
+        </div>
+      </div>
+
+      <div class="card" id="card-tool-2">
+        <div>
+          <div class="pdf-card-header"><div><span class="caption">Engine 02</span><h3 style="margin:0;">PDF Splitter</h3></div><span class="pdf-index-badge">02</span></div>
+          <p style="font-size: 13px; margin-top:4px;">Upload multi-page PDFs. Open the light table to pluck out unwanted pages instantly.</p>
+          
+          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-2')">
+            <input type="file" id="input-tool-2" multiple accept="application/pdf" onchange="handleAdditiveIngest('splitter', this)">
+            <span style="font-size: 22px;">✂️📄</span><span style="font-weight: 800;">Upload Master PDFs</span>
+            <span class="file-counter-tag" id="tag-tool-2">0 Pages Rendered</span>
+          </label>
+        </div>
+        <div style="display:flex; flex-direction: column; gap:8px;">
+          <div class="workspace-btn-row">
+            <button class="btn-secondary" id="edit-tool-2" disabled onclick="launchStudio('splitter')">Select Pages</button>
+            <button class="btn-clear-pill" id="clear-tool-2" disabled onclick="clearWorkspace('splitter')">Clear</button>
+          </div>
+          <button class="btn-primary" id="run-tool-2" disabled onclick="executePayload('splitter')">Download Split PDF</button>
+        </div>
+      </div>
+
+      <div class="card" id="card-tool-3">
+        <div>
+          <div class="pdf-card-header"><div><span class="caption">Engine 03</span><h3 style="margin:0;">Compressor</h3></div><span class="pdf-index-badge">03</span></div>
+          <p style="font-size: 13px; margin-top:4px;">Re-encodes vector streams down into optimized raster matrices to save hard drive space.</p>
+          
+          <label class="file-drop-area" style="padding:12px 16px;" onclick="triggerNativeInput('input-tool-3')">
+            <input type="file" id="input-tool-3" multiple accept="application/pdf" onchange="handleAdditiveIngest('compressor', this)">
+            <span style="font-size: 22px;">🗜️</span><span style="font-weight: 800;">Upload Heavy Files</span>
+            <span class="file-counter-tag" id="tag-tool-3">Ready for Downsample</span>
+          </label>
+          <select id="select-comp-tier" style="margin-bottom: 4px; height: 42px; font-size:12px;">
+            <option value="0.8">Standard Tier (80% Raster Quality)</option>
+            <option value="0.4">Archival Tier (40% High Compression)</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction: column; gap:8px;">
+          <div class="workspace-btn-row">
+            <button class="btn-secondary" id="edit-tool-3" disabled onclick="launchStudio('compressor')">Inspect Pages</button>
+            <button class="btn-clear-pill" id="clear-tool-3" disabled onclick="clearWorkspace('compressor')">Clear</button>
+          </div>
+          <button class="btn-primary" id="run-tool-3" disabled onclick="executePayload('compressor')">Download Compressed</button>
+        </div>
+      </div>
+
+      <div class="card" id="card-tool-4">
+        <div>
+          <div class="pdf-card-header"><div><span class="caption">Engine 04</span><h3 style="margin:0;">Image to PDF</h3></div><span class="pdf-index-badge">04</span></div>
+          <p style="font-size: 13px; margin-top:4px;">Compile loose JPG/PNG raster graphics. Add more anytime; sequence prior to compile.</p>
+          
+          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-4')">
+            <input type="file" id="input-tool-4" multiple accept="image/png, image/jpeg" onchange="handleAdditiveIngest('img2pdf', this)">
+            <span style="font-size: 22px;">🖼️&rarr;📄</span><span style="font-weight: 800;">Upload Assets</span>
+            <span class="file-counter-tag" id="tag-tool-4">0 Images Queued</span>
+          </label>
+        </div>
+        <div style="display:flex; flex-direction: column; gap:8px;">
+          <div class="workspace-btn-row">
+            <button class="btn-secondary" id="edit-tool-4" disabled onclick="launchStudio('img2pdf')">Sequence Order</button>
+            <button class="btn-clear-pill" id="clear-tool-4" disabled onclick="clearWorkspace('img2pdf')">Clear</button>
+          </div>
+          <button class="btn-primary" id="run-tool-4" disabled onclick="executePayload('img2pdf')">Download Output PDF</button>
+        </div>
+      </div>
+
+      <div class="card" id="card-tool-5">
+        <div>
+          <div class="pdf-card-header"><div><span class="caption">Engine 05</span><h3 style="margin:0;">PDF to Image</h3></div><span class="pdf-index-badge">05</span></div>
+          <p style="font-size: 13px; margin-top:4px;">Rasterize master PDF layout pages into individual, high-fidelity PNG graphic files.</p>
+          
+          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-5')">
+            <input type="file" id="input-tool-5" multiple accept="application/pdf" onchange="handleAdditiveIngest('pdf2img', this)">
+            <span style="font-size: 22px;">📄&rarr;🖼️</span><span style="font-weight: 800;">Upload Master PDF</span>
+            <span class="file-counter-tag" id="tag-tool-5">0 Pages Ripped</span>
+          </label>
+        </div>
+        <div style="display:flex; flex-direction: column; gap:8px;">
+          <div class="workspace-btn-row">
+            <button class="btn-secondary" id="edit-tool-5" disabled onclick="launchStudio('pdf2img')">Filter Pages</button>
+            <button class="btn-clear-pill" id="clear-tool-5" disabled onclick="clearWorkspace('pdf2img')">Clear</button>
+          </div>
+          <button class="btn-primary" id="run-tool-5" disabled onclick="executePayload('pdf2img')">Download Zip Archive</button>
+        </div>
+      </div>
+
+      <div class="card" id="card-tool-6">
+        <div>
+          <div class="pdf-card-header"><div><span class="caption">Engine 06</span><h3 style="margin:0;">Hybrid OS</h3></div><span class="pdf-index-badge">06</span></div>
+          <p style="font-size: 13px; margin-top:4px;">Interleave raw scan photos and standard PDF chapters together in the same visual timeline.</p>
+          
+          <label class="file-drop-area" onclick="triggerNativeInput('input-tool-6')">
+            <input type="file" id="input-tool-6" multiple accept="application/pdf, image/png, image/jpeg" onchange="handleAdditiveIngest('hybrid', this)">
+            <span style="font-size: 22px;">📄+🖼️</span><span style="font-weight: 800;">Drop PDFs &amp; Images</span>
+            <span class="file-counter-tag" id="tag-tool-6">0 Mixed Assets Queued</span>
+          </label>
+        </div>
+        <div style="display:flex; flex-direction: column; gap:8px;">
+          <div class="workspace-btn-row">
+            <button class="btn-secondary" id="edit-tool-6" disabled onclick="launchStudio('hybrid')">Interleave Order</button>
+            <button class="btn-clear-pill" id="clear-tool-6" disabled onclick="clearWorkspace('hybrid')">Clear</button>
+          </div>
+          <button class="btn-primary" id="run-tool-6" disabled onclick="executePayload('hybrid')">Compile Hybrid Output</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    /* =========================================================
+       MODULE 1: USER'S EXACT 1:1 CGPA CALCULATOR SCRIPT
+    ========================================================= */
+    document.addEventListener("DOMContentLoaded", function() {
+      var gradeMap = { "O": 10, "A+": 9, "A": 8, "B+": 7, "B": 6, "C": 5, "F": 0 };
+      var addBtn = document.getElementById("btn-add"); var calcBtn = document.getElementById("btn-calc"); var resetBtn = document.getElementById("btn-reset"); var courseContainer = document.getElementById("calc-courses"); var output = document.getElementById("calc-gpa-output");
+
+      function createCourseRow() {
+        var row = document.createElement("div"); row.className = "calc-course-row";
+        var creditInput = document.createElement("input"); creditInput.type = "number"; creditInput.placeholder = "Credits"; creditInput.className = "credit";
+        var gradeSelect = document.createElement("select"); gradeSelect.className = "grade";
+        var grades = ["", "O", "A+", "A", "B+", "B", "C", "F"];
+        for (var i = 0; i < grades.length; i++) { var option = document.createElement("option"); option.value = grades[i]; option.text = grades[i] === "" ? "Grade" : grades[i]; gradeSelect.appendChild(option); }
+        row.appendChild(creditInput); row.appendChild(gradeSelect); courseContainer.appendChild(row);
+      }
+
+      function calculateCGPA() {
+        var credits = document.getElementsByClassName("credit"); var grades = document.getElementsByClassName("grade");
+        var totalCredits = 0; var totalPoints = 0;
+        for (var i = 0; i < credits.length; i++) { var c = parseFloat(credits[i].value); var g = grades[i].value; if (!isNaN(c) && gradeMap[g] !== undefined) { totalCredits += c; totalPoints += c * gradeMap[g]; } }
+        if (totalCredits === 0) { output.innerHTML = "0.00"; return; }
+        output.innerHTML = (totalPoints / totalCredits).toFixed(2);
+      }
+      function resetAll() { courseContainer.innerHTML = ""; output.innerHTML = "0.00"; createCourseRow(); }
+
+      addBtn.addEventListener("click", createCourseRow); calcBtn.addEventListener("click", calculateCGPA); resetBtn.addEventListener("click", resetAll);
+      createCourseRow(); createCourseRow(); createCourseRow();
+    });
+
+
+    /* =========================================================
+       MODULE 2: BAUHAUS FLOATING-POINT POMODORO
+    ========================================================= */
+    const minGoalInput = document.getElementById('pomo-minute-goal'); const timeScreen = document.getElementById('timer-display-screen'); const pomoStart = document.getElementById('btn-pomo-start'); const pomoReset = document.getElementById('btn-pomo-reset'); const pomoSound = document.getElementById('btn-pomo-sound'); const soundtrackSource = document.getElementById('soundtrack-source'); const audioHardware = document.getElementById('hardware-audio-player');
+    const domSeed = document.getElementById('geo-seed'); const domTrunk = document.getElementById('geo-trunk'); const domBrL = document.getElementById('geo-branch-l'); const domBrR = document.getElementById('geo-branch-r'); const domTier1 = document.getElementById('tier-1'); const domTier2 = document.getElementById('tier-2'); const domTier3 = document.getElementById('tier-3'); const domApp1 = document.getElementById('apple-1'); const domApp2 = document.getElementById('apple-2'); const domApp3 = document.getElementById('apple-3');
+
+    let totalMasterSecs = (parseInt(minGoalInput.value) || 25) * 60; let internalSecs = totalMasterSecs; let timelineInt = null; let isTimelineActive = false; audioHardware.src = soundtrackSource.value;
+
+    function clampMap(val, inMin, inMax, outMin, outMax) { if (val <= inMin) return outMin; if (val >= inMax) return outMax; return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin; }
+    minGoalInput.addEventListener('change', () => { let val = Math.max(1, Math.min(120, parseInt(minGoalInput.value) || 25)); minGoalInput.value = val; if(!isTimelineActive) { totalMasterSecs = val * 60; internalSecs = totalMasterSecs; refreshScreen(); executeBauhausSpline(0); } });
+    function refreshScreen() { let m = String(Math.floor(internalSecs / 60)).padStart(2, '0'); let s = String(internalSecs % 60).padStart(2, '0'); timeScreen.textContent = `${m}:${s}`; }
+
+    function executeBauhausSpline(p) {
+      domSeed.style.opacity = String(clampMap(p, 0.0, 0.15, 1.0, 0.0));
+      domTrunk.style.transform = `scaleY(${clampMap(p, 0.10, 0.40, 0.0, 1.0)})`;
+      let branchS = clampMap(p, 0.28, 0.48, 0.0, 1.0); domBrL.style.transform = `scale(${branchS})`; domBrR.style.transform = `scale(${branchS})`;
+      domTier1.style.transform = `scaleX(${clampMap(p, 0.38, 0.62, 0.0, 1.0)})`; domTier2.style.transform = `scaleX(${clampMap(p, 0.50, 0.75, 0.0, 1.0)})`; domTier3.style.transform = `scale(${clampMap(p, 0.64, 0.84, 0.0, 1.0)})`;
+      domApp1.style.transform = `scale(${clampMap(p, 0.76, 0.86, 0.0, 1.0)})`; domApp2.style.transform = `scale(${clampMap(p, 0.84, 0.93, 0.0, 1.0)})`; domApp3.style.transform = `scale(${clampMap(p, 0.92, 1.00, 0.0, 1.0)})`;
+    }
+
+    pomoStart.addEventListener('click', () => {
+      if(!isTimelineActive) {
+        isTimelineActive = true; pomoStart.textContent = "Pause"; pomoStart.style.background = "var(--warning)"; minGoalInput.disabled = true;
+        timelineInt = setInterval(() => { if(internalSecs > 0) { internalSecs--; refreshScreen(); executeBauhausSpline(1 - (internalSecs / totalMasterSecs)); } else { clearInterval(timelineInt); isTimelineActive = false; pomoStart.textContent = "Start"; pomoStart.style.background = "var(--primary)"; minGoalInput.disabled = false; alert("🎯 Focus Session successfully executed! Harvest completed."); } }, 1000);
+      } else { isTimelineActive = false; clearInterval(timelineInt); pomoStart.textContent = "Resume"; pomoStart.style.background = "var(--primary)"; minGoalInput.disabled = false; }
+    });
+
+    pomoReset.addEventListener('click', () => { isTimelineActive = false; clearInterval(timelineInt); totalMasterSecs = (parseInt(minGoalInput.value) || 25) * 60; internalSecs = totalMasterSecs; pomoStart.textContent = "Start"; pomoStart.style.background = "var(--primary)"; minGoalInput.disabled = false; refreshScreen(); executeBauhausSpline(0); });
+    let isAudioStreamOn = false; soundtrackSource.addEventListener('change', () => { audioHardware.src = soundtrackSource.value; if(isAudioStreamOn) audioHardware.play(); });
+    pomoSound.addEventListener('click', () => { if(!isAudioStreamOn) { audioHardware.play().then(() => { isAudioStreamOn = true; pomoSound.textContent = "🔊 Active"; pomoSound.style.background = "var(--primary)"; pomoSound.style.borderColor = "var(--primary)"; }).catch(e => alert("Audio blocked by browser auto-play policy.")); } else { audioHardware.pause(); isAudioStreamOn = false; pomoSound.textContent = "♫ Play"; pomoSound.style.background = "var(--secondary)"; pomoSound.style.borderColor = "var(--border)"; } });
+    refreshScreen(); executeBauhausSpline(0);
+
+
+    /* =========================================================
+       MODULE 3: STRICTLY ADDITIVE PAGE STUDIO & COMPILER
+    ========================================================= */
+    
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    // Global Operating Datastores (Never reset implicitly)
+    const engineMemory = {
+      merger: [], splitter: [], compressor: [], img2pdf: [], pdf2img: [], hybrid: []
+    };
+
+    let activeStudioTool  = null;
+    let draggedThumbIndex = null;
+
+    function triggerNativeInput(id) { document.getElementById(id).click(); }
+
+    const toolMap = {
+      merger:     { title: "PDF Merger Studio", edit: "edit-tool-1", clear: "clear-tool-1", run: "run-tool-1", tag: "tag-tool-1", fileOut: "Merged_Academic_Output.pdf" },
+      splitter:   { title: "PDF Splitter Studio", edit: "edit-tool-2", clear: "clear-tool-2", run: "run-tool-2", tag: "tag-tool-2", fileOut: "Split_Academic_Output.pdf" },
+      compressor: { title: "Raster Compressor Studio", edit: "edit-tool-3", clear: "clear-tool-3", run: "run-tool-3", tag: "tag-tool-3", fileOut: "Compressed_Academic_Output.pdf" },
+      img2pdf:    { title: "Image-to-PDF Studio", edit: "edit-tool-4", clear: "clear-tool-4", run: "run-tool-4", tag: "tag-tool-4", fileOut: "Compiled_Image_Booklet.pdf" },
+      pdf2img:    { title: "PDF Raster Ripper", edit: "edit-tool-5", clear: "clear-tool-5", run: "run-tool-5", tag: "tag-tool-5", fileOut: "Ripped_PNG_Archive.zip" },
+      hybrid:     { title: "Hybrid Interleave OS", edit: "edit-tool-6", clear: "clear-tool-6", run: "run-tool-6", tag: "tag-tool-6", fileOut: "Synthesized_Hybrid_Document.pdf" }
+    };
+
+    // 3.1 STRICTLY ADDITIVE INGESTION
+    async function handleAdditiveIngest(toolKey, inputElement) {
+      const files = Array.from(inputElement.files);
+      if(files.length === 0) return;
+
+      const editBtn  = document.getElementById(toolMap[toolKey].edit);
+      const clearBtn = document.getElementById(toolMap[toolKey].clear);
+      const runBtn   = document.getElementById(toolMap[toolKey].run);
+      const tag      = document.getElementById(toolMap[toolKey].tag);
+      
+      editBtn.disabled = true; runBtn.disabled = true; clearBtn.disabled = true;
+      tag.textContent = "⏳ Extracting & Appending Nodes...";
+      tag.style.background = "var(--warning)";
+
+      // NOTICE: We do NOT wipe engineMemory[toolKey]. We append to it!
+      for(let file of files) {
+        if(file.type === 'application/pdf') {
+          const rippedPages = await extractPdfCanvases(file);
+          engineMemory[toolKey].push(...rippedPages);
+        } else if(file.type.startsWith('image/')) {
+          const imgObj = await extractImageDescriptor(file);
+          engineMemory[toolKey].push(imgObj);
+        }
+      }
+
+      updateWorkspaceCardUi(toolKey);
+      
+      // FLUSH NATIVE BUFFER: This lets you click the same file again instantly
+      inputElement.value = ''; 
+    }
+
+    function clearWorkspace(toolKey) {
+      engineMemory[toolKey] = [];
+      updateWorkspaceCardUi(toolKey);
+    }
+
+    function updateWorkspaceCardUi(toolKey) {
+      const count    = engineMemory[toolKey].length;
+      const editBtn  = document.getElementById(toolMap[toolKey].edit);
+      const clearBtn = document.getElementById(toolMap[toolKey].clear);
+      const runBtn   = document.getElementById(toolMap[toolKey].run);
+      const tag      = document.getElementById(toolMap[toolKey].tag);
+
+      if(count > 0) {
+        tag.textContent = `${count} Total Pages in Pool`;
+        tag.style.background = "var(--success)";
+        editBtn.disabled  = false;
+        runBtn.disabled   = false;
+        clearBtn.disabled = false;
+      } else {
+        tag.textContent = `0 Files Ingested`;
+        tag.style.background = "var(--secondary)";
+        editBtn.disabled  = true;
+        runBtn.disabled   = true;
+        clearBtn.disabled = true;
+      }
+    }
+
+    async function extractPdfCanvases(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const total = doc.numPages; const pagesArray = [];
+      for(let i = 1; i <= total; i++) {
+        const page = await doc.getPage(i); const viewport = page.getViewport({ scale: 1.0 });
+        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        pagesArray.push({
+          id: 'node_' + Math.random().toString(36).substr(2, 9), type: 'pdf',
+          sourceFile: file, pageIndex: i - 1, dataUrl: canvas.toDataURL('image/jpeg', 0.85),
+          origWidth: viewport.width, origHeight: viewport.height,
+          label: `${file.name.substring(0,8)}.. (P.${i})`
+        });
+      }
+      return pagesArray;
+    }
+
+    function extractImageDescriptor(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            resolve({
+              id: 'node_' + Math.random().toString(36).substr(2, 9), type: 'image',
+              sourceFile: file, pageIndex: 0, dataUrl: e.target.result,
+              origWidth: img.width, origHeight: img.height, label: file.name.substring(0, 14)
+            });
+          }; img.src = e.target.result;
+        }; reader.readAsDataURL(file);
+      });
+    }
+
+    // 3.2 THE MASTER PAGE STUDIO (LIGHT TABLE)
+    const modalDom = document.getElementById('page-studio-modal');
+    const studioGrid = document.getElementById('studio-grid');
+
+    function launchStudio(toolKey) {
+      activeStudioTool = toolKey;
+      document.getElementById('studio-main-title').textContent = toolMap[toolKey].title;
+      renderStudioGrid(); modalDom.classList.add('active'); document.body.style.overflow = 'hidden';
+    }
+
+    function closeStudio() {
+      modalDom.classList.remove('active'); document.body.style.overflow = 'auto';
+      updateWorkspaceCardUi(activeStudioTool); // Sync remaining count back to card instantly!
+      activeStudioTool = null;
+    }
+
+    function renderStudioGrid() {
+      studioGrid.innerHTML = ''; const currentStream = engineMemory[activeStudioTool];
+      if(currentStream.length === 0) {
+        studioGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 48px; color:var(--text-secondary); font-weight:800;">No document nodes remain. Add files to pool.</div>`; return;
+      }
+      currentStream.forEach((node, index) => {
+        const thumb = document.createElement('div'); thumb.className = 'page-thumb-card'; thumb.draggable = true; thumb.dataset.index = index;
+        thumb.innerHTML = `<button class="page-del-btn" onclick="deleteStudioNode(${index})">✕</button><img src="${node.dataUrl}" alt="Thumbnail"><div class="page-meta-row"><span>${index + 1}.</span><span>${node.label}</span></div><div class="order-shift-group"><button onclick="shiftStudioNode(${index}, -1)">&larr;</button><button onclick="shiftStudioNode(${index}, 1)">&rarr;</button></div>`;
+        thumb.addEventListener('dragstart', () => { draggedThumbIndex = index; thumb.style.opacity = '0.4'; });
+        thumb.addEventListener('dragend', () => { thumb.style.opacity = '1'; });
+        thumb.addEventListener('dragover', (e) => { e.preventDefault(); thumb.classList.add('drag-over'); });
+        thumb.addEventListener('dragleave', () => { thumb.classList.remove('drag-over'); });
+        thumb.addEventListener('drop', (e) => {
+          e.preventDefault(); thumb.classList.remove('drag-over');
+          if(draggedThumbIndex === null || draggedThumbIndex === index) return;
+          const movedObj = engineMemory[activeStudioTool].splice(draggedThumbIndex, 1)[0];
+          engineMemory[activeStudioTool].splice(index, 0, movedObj); renderStudioGrid();
+        });
+        studioGrid.appendChild(thumb);
+      });
+    }
+
+    function deleteStudioNode(idx) { engineMemory[activeStudioTool].splice(idx, 1); renderStudioGrid(); }
+    function shiftStudioNode(idx, direction) {
+      const target = idx + direction; if(target < 0 || target >= engineMemory[activeStudioTool].length) return;
+      const tmp = engineMemory[activeStudioTool][idx];
+      engineMemory[activeStudioTool][idx] = engineMemory[activeStudioTool][target];
+      engineMemory[activeStudioTool][target] = tmp; renderStudioGrid();
+    }
+
+    document.getElementById('btn-studio-commit').addEventListener('click', () => {
+      const currentTool = activeStudioTool; closeStudio(); executePayload(currentTool);
+    });
+
+    // 3.3 PAYLOAD COMPILATION & DISK EXPORT
+    async function executePayload(toolKey) {
+      const nodes = engineMemory[toolKey];
+      if(nodes.length === 0) return alert("Queue at least 1 document node before compiling.");
+
+      const runBtn = document.getElementById(toolMap[toolKey].run);
+      runBtn.textContent = "⏳ Ripping & Compiling..."; runBtn.disabled = true;
+
+      try {
+        if(toolKey === 'pdf2img') {
+          const zipArchive = new JSZip(); const folder = zipArchive.folder("Ripped_PDF_Pages");
+          nodes.forEach((node, i) => { const base64Data = node.dataUrl.replace(/^data:image\/jpeg;base64,/, ""); folder.file(`Page_${String(i+1).padStart(3, '0')}.jpg`, base64Data, { base64: true }); });
+          const zipBlob = await zipArchive.generateAsync({ type: "blob" });
+          forceBlobDownload(zipBlob, toolMap[toolKey].fileOut, "application/zip"); resetButtonState(toolKey); return;
+        }
+
+        if(toolKey === 'compressor') {
+          const compQuality = parseFloat(document.getElementById('select-comp-tier').value);
+          const compDoc = await PDFLib.PDFDocument.create();
+          for(let node of nodes) {
+            const embeddedJpg = await compDoc.embedJpg(node.dataUrl); const page = compDoc.addPage([embeddedJpg.width, embeddedJpg.height]);
+            page.drawImage(embeddedJpg, { x:0, y:0, width: embeddedJpg.width, height: embeddedJpg.height });
+          }
+          const compBytes = await compDoc.save(); forceBlobDownload(compBytes, toolMap[toolKey].fileOut, "application/pdf"); resetButtonState(toolKey); return;
+        }
+
+        const masterPdf = await PDFLib.PDFDocument.create(); const parsedDocCache = new Map();
+        for(let node of nodes) {
+          if(node.type === 'pdf') {
+            let loadedPdfDoc;
+            if(parsedDocCache.has(node.sourceFile.name)) loadedPdfDoc = parsedDocCache.get(node.sourceFile.name);
+            else { const srcBuffer = await node.sourceFile.arrayBuffer(); loadedPdfDoc = await PDFLib.PDFDocument.load(srcBuffer); parsedDocCache.set(node.sourceFile.name, loadedPdfDoc); }
+            const [copiedPage] = await masterPdf.copyPages(loadedPdfDoc, [node.pageIndex]); masterPdf.addPage(copiedPage);
+          } else if(node.type === 'image') {
+            const rawImgBuffer = await node.sourceFile.arrayBuffer(); let embeddedImgObj;
+            if(node.sourceFile.type.includes('png')) embeddedImgObj = await masterPdf.embedPng(rawImgBuffer);
+            else embeddedImgObj = await masterPdf.embedJpg(rawImgBuffer);
+            const newPage = masterPdf.addPage([embeddedImgObj.width, embeddedImgObj.height]);
+            newPage.drawImage(embeddedImgObj, { x:0, y:0, width: embeddedImgObj.width, height: embeddedImgObj.height });
+          }
+        }
+
+        const outputPdfBytes = await masterPdf.save(); forceBlobDownload(outputPdfBytes, toolMap[toolKey].fileOut, "application/pdf"); resetButtonState(toolKey);
+      } catch(err) { alert("Fatal Compilation Error: Payload stream corrupt or locked."); resetButtonState(toolKey); }
+    }
+
+    function forceBlobDownload(dataBuffer, defaultName, mimeType) {
+      const blob = new Blob([dataBuffer], { type: mimeType }); const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob); link.download = defaultName; document.body.appendChild(link);
+      link.click(); document.body.removeChild(link); window.URL.revokeObjectURL(link.href);
+    }
+
+    function resetButtonState(toolKey) {
+      const runBtn = document.getElementById(toolMap[toolKey].run); runBtn.textContent = "Download Output"; runBtn.disabled = false;
+    }
+  </script>
+</body>
+</html>
