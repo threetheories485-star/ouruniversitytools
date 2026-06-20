@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>The Academic Suite. // SaaS OS</title>
+  <title>The Academic Suite. // uniTools</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,7 +188,7 @@
   <div class="master-wrapper">
 
     <div class="meta-grid-bar">
-      <span>SYS.KERNEL // ACADEMIC_CORE</span><span>PROTOCOL: SECURE_LOCAL_BUFFER</span>
+      <span>ACADEMIC_CORE</span><span>FROM:OurUniversityNotes</span>
     </div>
 
     <header class="header-block">
@@ -434,7 +434,8 @@
     const minGoalInput = document.getElementById('pomo-minute-goal'); const timeScreen = document.getElementById('timer-display-screen'); const pomoStart = document.getElementById('btn-pomo-start'); const pomoReset = document.getElementById('btn-pomo-reset'); const pomoSound = document.getElementById('btn-pomo-sound'); const soundtrackSource = document.getElementById('soundtrack-source'); const audioHardware = document.getElementById('hardware-audio-player');
     const domSeed = document.getElementById('geo-seed'); const domTrunk = document.getElementById('geo-trunk'); const domBrL = document.getElementById('geo-branch-l'); const domBrR = document.getElementById('geo-branch-r'); const domTier1 = document.getElementById('tier-1'); const domTier2 = document.getElementById('tier-2'); const domTier3 = document.getElementById('tier-3'); const domApp1 = document.getElementById('apple-1'); const domApp2 = document.getElementById('apple-2'); const domApp3 = document.getElementById('apple-3');
 
-    let totalMasterSecs = (parseInt(minGoalInput.value) || 25) * 60; let internalSecs = totalMasterSecs; let timelineInt = null; let isTimelineActive = false; audioHardware.src = soundtrackSource.value;
+    let totalMasterSecs = (parseInt(minGoalInput.value) || 25) * 60; let internalSecs = totalMasterSecs; let timelineInt = null; let isTimelineActive = false;
+    audioHardware.volume = 0.65; audioHardware.preload = "none"; audioHardware.setAttribute('playsinline', '');
 
     function clampMap(val, inMin, inMax, outMin, outMax) { if (val <= inMin) return outMin; if (val >= inMax) return outMax; return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin; }
     minGoalInput.addEventListener('change', () => { let val = Math.max(1, Math.min(120, parseInt(minGoalInput.value) || 25)); minGoalInput.value = val; if(!isTimelineActive) { totalMasterSecs = val * 60; internalSecs = totalMasterSecs; refreshScreen(); executeBauhausSpline(0); } });
@@ -456,8 +457,39 @@
     });
 
     pomoReset.addEventListener('click', () => { isTimelineActive = false; clearInterval(timelineInt); totalMasterSecs = (parseInt(minGoalInput.value) || 25) * 60; internalSecs = totalMasterSecs; pomoStart.textContent = "Start"; pomoStart.style.background = "var(--primary)"; minGoalInput.disabled = false; refreshScreen(); executeBauhausSpline(0); });
-    let isAudioStreamOn = false; soundtrackSource.addEventListener('change', () => { audioHardware.src = soundtrackSource.value; if(isAudioStreamOn) audioHardware.play(); });
-    pomoSound.addEventListener('click', () => { if(!isAudioStreamOn) { audioHardware.play().then(() => { isAudioStreamOn = true; pomoSound.textContent = "🔊 Active"; pomoSound.style.background = "var(--primary)"; pomoSound.style.borderColor = "var(--primary)"; }).catch(e => alert("Audio blocked by browser auto-play policy.")); } else { audioHardware.pause(); isAudioStreamOn = false; pomoSound.textContent = "♫ Play"; pomoSound.style.background = "var(--secondary)"; pomoSound.style.borderColor = "var(--border)"; } });
+    let isAudioStreamOn = false;
+    soundtrackSource.addEventListener('change', () => {
+      audioHardware.src = soundtrackSource.value;
+      if(isAudioStreamOn) {
+        audioHardware.play().catch(() => {
+          isAudioStreamOn = false;
+          pomoSound.textContent = "♫ Play";
+          pomoSound.style.background = "var(--secondary)";
+          pomoSound.style.borderColor = "var(--border)";
+        });
+      }
+    });
+    pomoSound.addEventListener('click', () => {
+      if(!isAudioStreamOn) {
+        audioHardware.src = soundtrackSource.value;
+        audioHardware.currentTime = 0;
+        audioHardware.play().then(() => {
+          isAudioStreamOn = true;
+          pomoSound.textContent = "🔊 Active";
+          pomoSound.style.background = "var(--primary)";
+          pomoSound.style.borderColor = "var(--primary)";
+        }).catch(e => {
+          console.warn('Audio play blocked by browser autoplay policy.', e);
+          alert('Browser autoplay policy prevents audio before you explicitly start it. Please click the Play button again.');
+        });
+      } else {
+        audioHardware.pause();
+        isAudioStreamOn = false;
+        pomoSound.textContent = "♫ Play";
+        pomoSound.style.background = "var(--secondary)";
+        pomoSound.style.borderColor = "var(--border)";
+      }
+    });
     refreshScreen(); executeBauhausSpline(0);
 
 
